@@ -1,0 +1,3 @@
+attachhashdnsbl FMBLA_ATTACHHASH  virus.fmb.la
+body            FMBLA_ATTACHHASH  eval:check_attachhash('FMBLA_ATTACHHASH')
+tflags          FMBLA_ATTACHHASH  net

@@ -1,0 +1,1 @@
+#loadplugin Mail::SpamAssassin::Plugin::AttachHash /etc/spamassassin/AttachHash.pm
