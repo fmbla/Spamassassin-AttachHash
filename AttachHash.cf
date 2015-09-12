@@ -1,3 +1,6 @@
-attachhashdnsbl FMBLA_ATTACHHASH  virus.fmb.la
-body            FMBLA_ATTACHHASH  eval:check_attachhash('FMBLA_ATTACHHASH')
-tflags          FMBLA_ATTACHHASH  net
+# Only an example zone
+# Possible zones include hash.sapao.net malware.hash.cymru.com
+
+attachhashdnsbl EXAMPLE_ATTACHHASH  bl.example.com
+body            EXAMPLE_ATTACHHASH  eval:check_attachhash('EXAMPLE_ATTACHHASH')
+tflags          EXAMPLE_ATTACHHASH  net
