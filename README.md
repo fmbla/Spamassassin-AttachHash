@@ -1,5 +1,5 @@
 # Spamassassin-AttachHash
-Plugin for spamassassin that makgs an MD5 sum from attachments in an email for query against a DNSBL
+Plugin for spamassassin that makes an MD5 sum from attachments in an email for query against a DNSBL
 
 Example
 
