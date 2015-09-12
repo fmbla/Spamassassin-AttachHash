@@ -35,27 +35,30 @@ sub dbg {
 
 sub set_config
 {
-    my ($self, $conf) = @_;
-    my @cmds;
+  my ($self, $conf) = @_;
+  my @cmds;
 
-    push (@cmds, {
-        setting => 'attachhashdnsbl',
-        is_priv => 1,
-        code => sub {
-            my ($self, $key, $value, $line) = @_;
-            unless (defined $value && $value !~ /^$/) {
-                return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
-            }
-            unless ($value =~ /^(\S+)\s+(\S+?)\.?$/) {
-                return $Mail::SpamAssassin::Conf::INVALID_VALUE;
-            }
-            my $rulename = $1;
-            my $zone = lc($2).'.';
-            $self->{attachhashdnsbls}->{$rulename} = { zone=>$zone };
-        }
-    });
+  push (@cmds, {
+    setting => 'attachhashdnsbl',
+    is_priv => 1,
+    code => sub {
+      my ($self, $key, $value, $line) = @_;
 
-    $conf->{parser}->register_commands(\@cmds);
+      unless (defined $value && $value !~ /^$/) {
+        return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+      }
+
+      unless ($value =~ /^(\S+)\s+(\S+?)\.?$/) {
+        return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+      }
+
+      my $rulename = $1;
+      my $zone = lc($2).'.';
+      $self->{attachhashdnsbls}->{$rulename} = { zone=>$zone };
+    }
+  });
+
+  $conf->{parser}->register_commands(\@cmds);
 }
 
 sub check_attachhash {
