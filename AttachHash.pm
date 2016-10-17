@@ -2,7 +2,7 @@ package Mail::SpamAssassin::Plugin::AttachHash;
 
 use Mail::SpamAssassin::Plugin;
 use Mail::SpamAssassin::Util;
-use Digest::SHA qw(sha256_hex);
+use Digest::SHA qw(sha1_hex sha256_hex);
 use Digest::MD5 qw(md5_hex);
 use MIME::QuotedPrint;
 
@@ -58,6 +58,24 @@ sub set_config
     }
   });
 
+
+  push(@cmds, {
+    setting => 'attach_hash_type',
+    default => 'md5',
+    type => $Mail::SpamAssassin::Conf::CONF_TYPE_STRING,
+    code => sub {
+      my ($self, $key, $value, $line) = @_;
+      unless (defined $value && $value !~ /^$/) {
+        return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+      }
+      unless ($value =~ /^(?:md5|sha1|sha256)$/i) {
+        return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+      }
+      $self->{attach_hash_type} = lc($value)
+      },
+    }
+  );
+
   $conf->{parser}->register_commands(\@cmds);
 }
 
@@ -79,9 +97,17 @@ my %get_details = (
       $data = $part->decode();  # just use built in base64 decoder
     }
 
-    my $md5 = '';
-    $md5 = md5_hex($data) if $data;
-    $pms->{attachhash_hashes}->{$md5} = 1;
+    my $hash = '';
+    my $algo = $pms->{main}->{conf}->{attach_hash_type};
+    if ($algo eq 'sha1') {
+      $hash = sha1_hex($data) if $data;
+    } elsif ($algo eq 'sha256') {
+      $hash = sha256_hex($data) if $data;
+    } else {
+      $hash = md5_hex($data) if $data;
+    }
+    dbg("attach lookup for hash:$hash algo:$algo");
+    $pms->{attachhash_hashes}->{$hash} = 1;
   },
 );
 
