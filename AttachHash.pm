@@ -2,7 +2,7 @@ package Mail::SpamAssassin::Plugin::AttachHash;
 
 use Mail::SpamAssassin::Plugin;
 use Mail::SpamAssassin::Util;
-use Digest::SHA qw(sha1_hex sha256_hex);
+use Digest::SHA qw(sha1_hex);
 use Digest::MD5 qw(md5_hex);
 use MIME::QuotedPrint;
 
@@ -68,7 +68,7 @@ sub set_config
       unless (defined $value && $value !~ /^$/) {
         return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
       }
-      unless ($value =~ /^(?:md5|sha1|sha256)$/i) {
+      unless ($value =~ /^(?:md5|sha1)$/i) {
         return $Mail::SpamAssassin::Conf::INVALID_VALUE;
       }
       $self->{attach_hash_type} = lc($value)
@@ -101,8 +101,6 @@ my %get_details = (
     my $algo = $pms->{main}->{conf}->{attach_hash_type};
     if ($algo eq 'sha1') {
       $hash = sha1_hex($data) if $data;
-    } elsif ($algo eq 'sha256') {
-      $hash = sha256_hex($data) if $data;
     } else {
       $hash = md5_hex($data) if $data;
     }
